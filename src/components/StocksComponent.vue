@@ -9,9 +9,9 @@
               </tr>
           </thead>
           <tbody>
-              <tr v-for="stock in stocks" v-bind:key="stock['01. symbol']">
-              <th scope="row">{{stock['01. symbol']}}</th>
-              <td>{{stock['05. price']}}</td>
+              <tr v-for="stock in stocks" v-bind:key="stock['Global Quote']['01. symbol']">
+              <th scope="row">{{stock['Global Quote']['01. symbol']}}</th>
+              <td>{{stock['Global Quote']['05. price']}}</td>
               </tr>
           </tbody>
       </table>
@@ -28,19 +28,18 @@ export default{
     data(){
         return{
             userStocks:[],
-            stocks:null,
+            stocks:[],
             stockSource: null
         };
     },
     methods:{
-        getStocks(){
+        getUserStocks(){
             StockList.forEach(element => {
                 this.userStocks.push(element.symbol)
             });
-        }
-    },
-    created: function(){
-        this.getStocks();
+        },
+        retrieveStocksDataFromAPI(){
+        this.getUserStocks();
         for (let i = 0; i < APIkeysJson.length; i++) {
             if(APIkeysJson[i].source === 'Alpha Vantage'){
                 this.stockSource = APIkeysJson[i].key
@@ -51,8 +50,12 @@ export default{
         axios
         .get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=`+selectedStock+`&apikey={$this.stockSource}`)
         .then(res=>{
-            this.stocks=res.data;
-        }));     
+            this.stocks.push(res.data);
+        }));  
+        }
+    },
+    created(){
+        this.retrieveStocksDataFromAPI();
     }
 }
 </script>
