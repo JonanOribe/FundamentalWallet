@@ -24,6 +24,12 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Utils
-Stock Market API: https://www.alphavantage.co/documentation/
+Stock Market API: 
+
+https://www.alphavantage.co/documentation/
 
 https://api.tiingo.com/documentation/end-of-day
+
+https://site.financialmodelingprep.com/developer/docs/#Price-Target
+
+https://github.com/patelneel55/financialmodelingprep

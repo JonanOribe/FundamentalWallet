@@ -1,19 +1,25 @@
 <template>
   <div id="app">
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
+      <NavBarComponent/>
+  <TableInputComponent/>
   <StocksComponent/>
   </div>
 
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+//import HelloWorld from './components/HelloWorld.vue'
+import NavBarComponent from './components/NavBarComponent.vue'
 import StocksComponent from './components/StocksComponent.vue'
+import TableInputComponent from './components/TableInputComponent.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    //HelloWorld,
+    NavBarComponent,
+    TableInputComponent,
     StocksComponent
 }
 }
@@ -26,6 +32,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
