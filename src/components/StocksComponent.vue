@@ -80,6 +80,7 @@ export default {
       fmp: null,
       numberOfStocks: 0,
       loadedStocks: 0,
+      stocksLoadedFlag:false
     };
   },
   methods: {
@@ -123,11 +124,15 @@ export default {
             console.log(e);
           })
       );
+      this.stocksLoadedFlag=true;
     },
   },
   computed: {
     errorOnLoading() {
-      return this.loadedStocks != this.numberOfStocks ? true : false;
+      if(this.stocksLoadedFlag){
+        return this.loadedStocks != this.numberOfStocks ? true : false;
+      }
+      return false;
     },
   },
   created() {
