@@ -48,7 +48,7 @@
           <td>{{ stock["acquisitionCondition"] }}</td>
           <td>{{ stock["acquisitionDate"] }}</td>
           <td>
-            <button type="button" class="btn btn-outline-warning">
+            <button type="button" class="btn btn-outline-warning" :click="deleteStock()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -89,6 +89,30 @@ export default {
     };
   },
   methods: {
+    deleteStock(){
+            const requestOptions = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      };
+      return fetch(this.qmAPIUrl+this.userId+"/portfolio", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+          console.log(data)
+         this.userStocks = data[0].portfolio_values;
+         this.numberOfStocks = data[0].portfolio_values.length;
+        })
+        .catch((error) => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
+    },
     getAPIData(){
       for (let i = 0; i < APIkeysJson.length; i++) {
         if (APIkeysJson[i].source === "fmp") {
