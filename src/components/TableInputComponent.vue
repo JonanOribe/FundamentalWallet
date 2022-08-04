@@ -3,6 +3,28 @@
     <p>Add your new stock: {{ stockName }}</p>
     <input v-model="stockName" placeholder="Add new stock symbol" />
     <button @click="updateStockList()">Add Stock to list</button>
+    <div>Selected: {{ selected }}</div>
+
+    <select v-model="selected">
+      <option disabled value="">Please select one</option>
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+    Stock Price:
+<input type="number" data-decimals="2" min="0" max="100000" step="0.1" v-model.number="stockPrice"/>
+
+    Stock Quantity:
+
+<input type="number" min="0" max="100000" step="1" v-model.number="stockQuantity"/>
+
+    <div>Picked: {{ statusPicked }}</div>
+
+    <input type="radio" id="long" value="long" v-model="statusPicked" />
+    <label for="long">Long</label>
+
+    <input type="radio" id="short" value="short" v-model="statusPicked" />
+    <label for="short">Short</label>
   </div>
 </template>
 
@@ -17,15 +39,18 @@ export default {
       stockName: null,
       qmAPIUrl: null,
       userId: null,
+      statusPicked: "long",
+      stockQuantity:1,
+      stockPrice:10.5
     };
   },
   methods: {
     updateStockList() {
       let newStock = {
         symbol: this.stockName,
-        stocks_quantity: 8,
-        price_on_buy: 91,
-        acquisition_condition: "long",
+        stocks_quantity: this.stockQuantity,
+        price_on_buy: this.stockPrice,
+        acquisition_condition: this.statusPicked,
         received_dividens: 12.6,
         operation_date: "1659417366",
       };
