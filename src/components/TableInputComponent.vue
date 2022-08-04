@@ -7,13 +7,12 @@
 </template>
 
 <script>
-import StockList from "../assets/data/StockList.json";
 
 export default {
   name: "TableInputComponent",
   data() {
     return {
-      StockList: StockList,
+      StockList: [],
       stockName: null,
     };
   },

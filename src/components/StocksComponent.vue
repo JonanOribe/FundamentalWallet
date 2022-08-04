@@ -23,10 +23,12 @@
           <th scope="col">Id</th>
           <th scope="col">Name</th>
           <th scope="col">Symbol</th>
-          <th scope="col">Price</th>
-          <th scope="col">BuyPrice</th>
+          <th scope="col">Current Price</th>
+          <th scope="col">Price on buy</th>
+          <th scope="col">Stock Quantity</th>
           <th scope="col">Diff</th>
-          <th scope="col">Timestamp</th>
+          <th scope="col">Acquisition Condition</th>
+          <th scope="col">Acquisition Date</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -40,9 +42,11 @@
           <td>{{ stock["name"] }}</td>
           <th scope="row">{{ stock["symbol"] }}</th>
           <td>{{ stock["price"] }}</td>
-          <td>{{ stock["buyPrice"] }}</td>
+          <td>{{ stock["priceOnBuy"] }}</td>
+          <td>{{ stock["stocksQuantity"] }}</td>
           <td>{{ stock["diff"] }}</td>
-          <td>{{ stock["timestamp"] }}</td>
+          <td>{{ stock["acquisitionCondition"] }}</td>
+          <td>{{ stock["acquisitionDate"] }}</td>
           <td>
             <button type="button" class="btn btn-outline-warning">
               <svg
@@ -68,7 +72,6 @@
 <script>
 import axios from "axios";
 import APIkeysJson from "../../secrets/APIkeys.json";
-import StockList from "../assets/data/StockList.json";
 
 export default {
   name: "StocksComponent",
@@ -80,18 +83,36 @@ export default {
       fmp: null,
       numberOfStocks: 0,
       loadedStocks: 0,
-      stocksLoadedFlag:false
+      stocksLoadedFlag: false,
     };
   },
   methods: {
     getUserStocks() {
-      StockList.forEach((element) => {
-        this.userStocks.push(element);
-        this.numberOfStocks++;
-      });
+      // POST request using fetch with error handling
+      const requestOptions = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      };
+      return fetch("https://qm-dashboard-api.herokuapp.com/NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3/portfolio", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+          console.log(data)
+         this.userStocks = data[0].portfolio_values;
+         this.numberOfStocks = data[0].portfolio_values.length;
+        })
+        .catch((error) => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
     },
     retrieveStocksDataFromAPI() {
-      this.getUserStocks();
       for (let i = 0; i < APIkeysJson.length; i++) {
         if (APIkeysJson[i].source === "fmp") {
           this.fmp = require("financialmodelingprep")(APIkeysJson[i].key);
@@ -107,13 +128,15 @@ export default {
               .then((res) => {
                 let mergedData = {
                   ...res[0],
-                  id: selectedStock["id"],
+                  id: selectedStock["_id"],
                   name: selectedStock["name"],
                   symbol: selectedStock["symbol"],
-                  buyPrice: selectedStock["buyPrice"],
-                  timestamp: selectedStock["timestamp"],
+                  priceOnBuy: selectedStock["price_on_buy"],
+                  stocksQuantity: selectedStock["stocks_quantity"],
+                  acquisitionCondition: selectedStock["acquisition_condition"],
+                  acquisitionDate: selectedStock["operation_date"],
                   diff: parseFloat(
-                    res[0]["price"] - selectedStock["buyPrice"]
+                    res[0]["price"]*selectedStock["stocks_quantity"] - selectedStock["price_on_buy"]*selectedStock["stocks_quantity"]
                   ).toFixed(2),
                 };
                 this.stocks.push(mergedData);
@@ -124,19 +147,21 @@ export default {
             console.log(e);
           })
       );
-      this.stocksLoadedFlag=true;
+      this.stocksLoadedFlag = true;
     },
   },
   computed: {
     errorOnLoading() {
-      if(this.stocksLoadedFlag){
+      if (this.stocksLoadedFlag) {
         return this.loadedStocks != this.numberOfStocks ? true : false;
       }
       return false;
     },
   },
   created() {
-    this.retrieveStocksDataFromAPI();
+    this.getUserStocks().then(()=>{
+      this.retrieveStocksDataFromAPI();
+    });
   },
 };
 </script>
