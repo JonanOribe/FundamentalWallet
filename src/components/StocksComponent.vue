@@ -79,6 +79,8 @@ export default {
     return {
       userStocks: [],
       stocks: [],
+      qmAPIUrl: null,
+      userId: null,
       stockSource: null,
       fmp: null,
       numberOfStocks: 0,
@@ -87,13 +89,26 @@ export default {
     };
   },
   methods: {
+    getAPIData(){
+      for (let i = 0; i < APIkeysJson.length; i++) {
+        if (APIkeysJson[i].source === "fmp") {
+          this.fmp = require("financialmodelingprep")(APIkeysJson[i].key);
+        }
+        if(APIkeysJson[i].source === "QMAPI"){
+          this.qmAPIUrl = APIkeysJson[i].url;
+        }
+        if(APIkeysJson[i].source === "QMAPITestUser"){
+          this.userId = APIkeysJson[i].userId;
+        }
+      }
+    },
     getUserStocks() {
       // POST request using fetch with error handling
       const requestOptions = {
         method: "GET",
         headers: { "Content-Type": "application/json" }
       };
-      return fetch("https://qm-dashboard-api.herokuapp.com/NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3/portfolio", requestOptions)
+      return fetch(this.qmAPIUrl+this.userId+"/portfolio", requestOptions)
         .then(async (response) => {
           const data = await response.json();
 
@@ -113,12 +128,6 @@ export default {
         });
     },
     retrieveStocksDataFromAPI() {
-      for (let i = 0; i < APIkeysJson.length; i++) {
-        if (APIkeysJson[i].source === "fmp") {
-          this.fmp = require("financialmodelingprep")(APIkeysJson[i].key);
-        }
-      }
-
       this.userStocks.forEach((selectedStock) =>
         axios
           .get(
@@ -159,6 +168,7 @@ export default {
     },
   },
   created() {
+    this.getAPIData();
     this.getUserStocks().then(()=>{
       this.retrieveStocksDataFromAPI();
     });
