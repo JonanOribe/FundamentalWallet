@@ -189,6 +189,7 @@ export default {
           })
       );
       this.stocksLoadedFlag = true;
+      localStorage.setItem("last_stocks_values_update_timestamp", Date.now());
     },
   },
   computed: {

@@ -45,6 +45,22 @@
             <a class="nav-link disabled">Link</a>
           </li>
         </ul>
+        <div class="progress investment_bar">
+          <div
+            class="progress-bar bg-success"
+            role="progressbar"
+            :style="{ width: balance_percentage + '%' }"
+          >
+            <b class="blackStrings">Available: {{ balance }}</b>
+          </div>
+          <div
+            class="progress-bar bg-warning"
+            role="progressbar"
+            :style="{ width: money_on_investment_percentage + '%' }"
+          >
+            <b class="blackStrings">Investmented: {{ money_on_investment }}</b>
+          </div>
+        </div>
         <form class="d-flex" role="search">
           <input
             class="form-control me-2"
@@ -97,9 +113,29 @@ export default {
   data() {
     return {
       expanded: false,
+      balance: parseInt(localStorage.getItem("balance")),
+      money_on_investment: parseInt(
+        localStorage.getItem("money_on_investment")
+      ),
+      balance_percentage: 100,
+      money_on_investment_percentage: 0,
     };
   },
-  methods: {},
+  methods: {
+    getPercentages() {
+      let total_amount = this.money_on_investment + this.balance;
+
+      this.balance_percentage = (this.balance / total_amount) * 100;
+      this.money_on_investment_percentage =
+        (this.money_on_investment / total_amount) * 100;
+
+      console.log(this.balance_percentage);
+      console.log(this.money_on_investment_percentage);
+    },
+  },
+  created() {
+    this.getPercentages();
+  },
 };
 </script>
 
@@ -114,5 +150,16 @@ a {
 
 .settings {
   margin-left: 0.5%;
+}
+
+.investment_bar {
+  width: 50%;
+  margin-left: 0.5%;
+  margin-right: 0.5%;
+}
+
+.blackStrings {
+  color: black;
+  font-size: 14px;
 }
 </style>
