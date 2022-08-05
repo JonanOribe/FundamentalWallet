@@ -48,7 +48,11 @@
           <td>{{ stock["acquisitionCondition"] }}</td>
           <td>{{ stock["acquisitionDate"] }}</td>
           <td>
-            <button type="button" class="btn btn-outline-warning" :click="deleteStock()">
+            <button
+              type="button"
+              class="btn btn-outline-warning"
+              @click="deleteStock(stock)"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -89,12 +93,19 @@ export default {
     };
   },
   methods: {
-    deleteStock(){
-            const requestOptions = {
+    deleteStock(stock) {
+      const requestOptions = {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       };
-      return fetch(this.qmAPIUrl+this.userId+"/portfolio", requestOptions)
+      return fetch(
+        this.qmAPIUrl +
+          "portfolio/" +
+          this.portfolioId +
+          "/delete_stock_from_portfolio/" +
+          stock.symbol,
+        requestOptions
+      )
         .then(async (response) => {
           const data = await response.json();
 
@@ -104,25 +115,23 @@ export default {
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
           }
-          console.log(data)
-         this.userStocks = data[0].portfolio_values;
-         this.numberOfStocks = data[0].portfolio_values.length;
         })
         .catch((error) => {
           this.errorMessage = error;
           console.error("There was an error!", error);
         });
     },
-    getAPIData(){
+    getAPIData() {
       for (let i = 0; i < APIkeysJson.length; i++) {
         if (APIkeysJson[i].source === "fmp") {
           this.fmp = require("financialmodelingprep")(APIkeysJson[i].key);
         }
-        if(APIkeysJson[i].source === "QMAPI"){
+        if (APIkeysJson[i].source === "QMAPI") {
           this.qmAPIUrl = APIkeysJson[i].url;
         }
-        if(APIkeysJson[i].source === "QMAPITestUser"){
+        if (APIkeysJson[i].source === "QMAPITestUser") {
           this.userId = APIkeysJson[i].userId;
+          this.portfolioId = APIkeysJson[i].portfolioId;
         }
       }
     },
@@ -130,9 +139,9 @@ export default {
       // POST request using fetch with error handling
       const requestOptions = {
         method: "GET",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       };
-      return fetch(this.qmAPIUrl+this.userId+"/portfolio", requestOptions)
+      return fetch(this.qmAPIUrl + this.userId + "/portfolio", requestOptions)
         .then(async (response) => {
           const data = await response.json();
 
@@ -142,9 +151,9 @@ export default {
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
           }
-          console.log(data)
-         this.userStocks = data[0].portfolio_values;
-         this.numberOfStocks = data[0].portfolio_values.length;
+          console.log(data);
+          this.userStocks = data[0].portfolio_values;
+          this.numberOfStocks = data[0].portfolio_values.length;
         })
         .catch((error) => {
           this.errorMessage = error;
@@ -169,7 +178,9 @@ export default {
                   acquisitionCondition: selectedStock["acquisition_condition"],
                   acquisitionDate: selectedStock["operation_date"],
                   diff: parseFloat(
-                    res[0]["price"]*selectedStock["stocks_quantity"] - selectedStock["price_on_buy"]*selectedStock["stocks_quantity"]
+                    res[0]["price"] * selectedStock["stocks_quantity"] -
+                      selectedStock["price_on_buy"] *
+                        selectedStock["stocks_quantity"]
                   ).toFixed(2),
                 };
                 this.stocks.push(mergedData);
@@ -193,7 +204,7 @@ export default {
   },
   created() {
     this.getAPIData();
-    this.getUserStocks().then(()=>{
+    this.getUserStocks().then(() => {
       this.retrieveStocksDataFromAPI();
     });
   },
