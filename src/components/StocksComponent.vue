@@ -20,16 +20,14 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Name</th>
-          <th scope="col">Symbol</th>
-          <th scope="col">Current Price</th>
-          <th scope="col">Price on buy</th>
-          <th scope="col">Stock Quantity</th>
-          <th scope="col">Diff</th>
-          <th scope="col">Acquisition Condition</th>
-          <th scope="col">Acquisition Date</th>
-          <th scope="col">Actions</th>
+          <th scope="col" class="white_text">Symbol</th>
+          <th scope="col" class="white_text">Current Price</th>
+          <th scope="col" class="white_text">Price on buy</th>
+          <th scope="col" class="white_text">Stock Quantity</th>
+          <th scope="col" class="white_text">Diff</th>
+          <th scope="col" class="white_text">Acquisition Condition</th>
+          <th scope="col" class="white_text">Acquisition Date</th>
+          <th scope="col" class="white_text">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -38,15 +36,13 @@
           v-bind:key="stock['id']"
           :class="`${parseInt(stock['diff']) >= 0 ? 'benefits' : 'noBenefits'}`"
         >
-          <td>{{ stock["id"] }}</td>
-          <td>{{ stock["name"] }}</td>
-          <th scope="row">{{ stock["symbol"] }}</th>
-          <td>{{ stock["price"] }}</td>
-          <td>{{ stock["priceOnBuy"] }}</td>
-          <td>{{ stock["stocksQuantity"] }}</td>
-          <td>{{ stock["diff"] }}</td>
-          <td>{{ stock["acquisitionCondition"] }}</td>
-          <td>{{ stock["acquisitionDate"] }}</td>
+          <th scope="row" class="white_text">{{ stock["symbol"] }}</th>
+          <td class="white_text">{{ stock["price"] }}{{currency}}</td>
+          <td class="white_text">{{ stock["priceOnBuy"] }}{{currency}}</td>
+          <td class="white_text">{{ stock["stocksQuantity"] }}</td>
+          <td class="white_text">{{ stock["diff"] }}{{currency}}</td>
+          <td class="white_text">{{ stock["acquisitionCondition"] }}</td>
+          <td class="white_text">{{ stock["acquisitionDate"] }}</td>
           <td>
             <button
               type="button"
@@ -90,6 +86,7 @@ export default {
       numberOfStocks: 0,
       loadedStocks: 0,
       stocksLoadedFlag: false,
+      currency:localStorage.getItem("currency")==="EU"?'€':'$'
     };
   },
   methods: {
@@ -167,8 +164,6 @@ export default {
               .then((res) => {
                 let mergedData = {
                   ...res[0],
-                  id: selectedStock["_id"],
-                  name: selectedStock["name"],
                   symbol: selectedStock["symbol"],
                   priceOnBuy: selectedStock["price_on_buy"],
                   stocksQuantity: selectedStock["stocks_quantity"],
@@ -219,6 +214,11 @@ h3 {
 }
 
 .benefits {
-  background: #008000a6;
+  background: #198754;
+}
+
+.white_text{
+  color:white; 
+  font-weight: bold;
 }
 </style>
