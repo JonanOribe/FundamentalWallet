@@ -75,7 +75,7 @@ export default {
       };
       return fetch(
         this.qmAPIUrl +
-          this.userId +
+          this.client_id +
           "/portfolio/update_client_portolio_values",
         requestOptions
       )
