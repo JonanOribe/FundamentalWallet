@@ -75,4 +75,8 @@ export default {
   color:white;
   background: black;
 }
+.body{
+  color:white;
+  background: black;
+  }
 </style>

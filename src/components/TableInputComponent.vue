@@ -1,6 +1,6 @@
 <template>
   <div class="container" style="margin-top: 0.5%;">
-    <p>Add your new stock >>>    <button class="btn btn-outline-success settings" @click="showNewStockModal()"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+    <p class="animate-charcter">Add your new stock >>>    <button class="btn btn-outline-success settings" @click="showNewStockModal()"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
 </svg>
@@ -8,13 +8,11 @@
 <div v-show="showAddNewStock">
     <input v-model="stockName" placeholder="Add new stock symbol" />
     <button @click="updateStockList(),showNewStockModal()">Add Stock to list</button>
-    <div>Selected: {{ selected }}</div>
+    <div>Select acquisition condition:</div>
 
-    <select v-model="selected">
-      <option disabled value="">Please select one</option>
-      <option>A</option>
-      <option>B</option>
-      <option>C</option>
+    <select v-model="statusPicked">
+      <option value="long">Long</option>
+      <option value="short">Short</option>
     </select>
     Stock Price:
 <input type="number" data-decimals="2" min="0" max="100000" step="0.1" v-model.number="stockPrice"/>
@@ -22,14 +20,6 @@
     Stock Quantity:
 
 <input type="number" min="0" max="100000" step="1" v-model.number="stockQuantity"/>
-
-    <div>Picked: {{ statusPicked }}</div>
-
-    <input type="radio" id="long" value="long" v-model="statusPicked" />
-    <label for="long">Long</label>
-
-    <input type="radio" id="short" value="short" v-model="statusPicked" />
-    <label for="short">Short</label>
     </div>
   </div>
 </template>
@@ -101,5 +91,34 @@ export default {
 <style scoped>
 h3 {
   margin-bottom: 5%;
+}
+
+.animate-charcter
+{
+   text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #231557 0%,
+    #44107a 29%,
+    #ff1361 67%,
+    #fff800 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+      font-size: 18px;
+}
+
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
 }
 </style>
