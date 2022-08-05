@@ -1,28 +1,69 @@
 <template>
   <div id="app">
-      <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
-      <NavBarComponent/>
-  <TableInputComponent/>
-  <StocksComponent/>
+    <!--<HelloWorld msg="Welcome to Your Vue.js App"/>-->
+    <NavBarComponent />
+    <TableInputComponent />
+    <StocksComponent />
   </div>
-
 </template>
 
 <script>
 //import HelloWorld from './components/HelloWorld.vue'
-import NavBarComponent from './components/NavBarComponent.vue'
-import StocksComponent from './components/StocksComponent.vue'
-import TableInputComponent from './components/TableInputComponent.vue'
+import NavBarComponent from "./components/NavBarComponent.vue";
+import StocksComponent from "./components/StocksComponent.vue";
+import TableInputComponent from "./components/TableInputComponent.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     //HelloWorld,
     NavBarComponent,
     TableInputComponent,
-    StocksComponent
-}
-}
+    StocksComponent,
+  },
+  data() {
+    return {
+      qmAPIUrl: "https://qm-dashboard-api.herokuapp.com/",
+      userId: "NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3",
+    };
+  },
+  methods: {
+    setDataForStorage(data) {
+      localStorage.setItem("qmAPIUrl", this.qmAPIUrl);
+      let arrayOfKeys = Object.keys(data);
+      for (let i = 0; i < arrayOfKeys.length; i++) {
+        let tempKey = arrayOfKeys[i];
+        localStorage.setItem(tempKey, data[tempKey]);
+      }
+    },
+    getUserData() {
+      // POST request using fetch with error handling
+      const requestOptions = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      };
+      return fetch(this.qmAPIUrl + "profile/" + this.userId, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+          this.setDataForStorage(data[0]);
+        })
+        .catch((error) => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
+    },
+  },
+  created() {
+    this.getUserData();
+  },
+};
 </script>
 
 <style>

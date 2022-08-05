@@ -83,8 +83,8 @@ export default {
     return {
       userStocks: [],
       stocks: [],
-      qmAPIUrl: null,
-      userId: null,
+      qmAPIUrl: localStorage.getItem("qmAPIUrl"),
+      client_id: localStorage.getItem("client_id"),
       stockSource: null,
       fmp: null,
       numberOfStocks: 0,
@@ -100,7 +100,8 @@ export default {
       };
       return fetch(
         this.qmAPIUrl +
-          "portfolio/" +
+          this.client_id +
+          "/portfolio/" +
           this.portfolioId +
           "/delete_stock_from_portfolio/" +
           stock.symbol,
@@ -126,11 +127,7 @@ export default {
         if (APIkeysJson[i].source === "fmp") {
           this.fmp = require("financialmodelingprep")(APIkeysJson[i].key);
         }
-        if (APIkeysJson[i].source === "QMAPI") {
-          this.qmAPIUrl = APIkeysJson[i].url;
-        }
         if (APIkeysJson[i].source === "QMAPITestUser") {
-          this.userId = APIkeysJson[i].userId;
           this.portfolioId = APIkeysJson[i].portfolioId;
         }
       }
@@ -141,7 +138,7 @@ export default {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       };
-      return fetch(this.qmAPIUrl + this.userId + "/portfolio", requestOptions)
+      return fetch(this.qmAPIUrl + this.client_id + "/portfolio", requestOptions)
         .then(async (response) => {
           const data = await response.json();
 

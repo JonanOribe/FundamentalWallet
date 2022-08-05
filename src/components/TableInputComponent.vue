@@ -35,16 +35,14 @@
 </template>
 
 <script>
-import APIkeysJson from "../../secrets/APIkeys.json";
-
 export default {
   name: "TableInputComponent",
   data() {
     return {
       showAddNewStock:false,
       stockName: null,
-      qmAPIUrl: null,
-      userId: null,
+      qmAPIUrl: localStorage.getItem("qmAPIUrl"),
+      client_id: localStorage.getItem("client_id"),
       statusPicked: "long",
       stockQuantity:1,
       stockPrice:10.5
@@ -66,17 +64,6 @@ export default {
       const newStockData = JSON.stringify(newStock);
 
       this.postUserStock(newStockData);
-    },
-
-    getAPIData() {
-      for (let i = 0; i < APIkeysJson.length; i++) {
-        if (APIkeysJson[i].source === "QMAPI") {
-          this.qmAPIUrl = APIkeysJson[i].url;
-        }
-        if (APIkeysJson[i].source === "QMAPITestUser") {
-          this.userId = APIkeysJson[i].userId;
-        }
-      }
     },
 
     postUserStock(newStockData) {
@@ -107,10 +94,7 @@ export default {
           console.error("There was an error!", error);
         });
     },
-  },
-  created() {
-    this.getAPIData();
-  },
+  }
 };
 </script>
 
