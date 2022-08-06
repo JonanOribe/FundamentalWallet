@@ -169,6 +169,7 @@ export default {
                   ).toFixed(2),
                 };
                 this.stocks.push(mergedData);
+                localStorage.setItem(selectedStock["symbol"],mergedData);
                 this.loadedStocks++;
               })
           )
