@@ -22,7 +22,7 @@
       role="alert"
       :style="{ display: errorOnAPI }"
     >
-      {{errorMessageFromAPI}}
+      {{ errorMessageFromAPI }}
     </div>
     <table class="table">
       <thead>
@@ -102,7 +102,7 @@ export default {
       modalDisplay: "none",
       modalData: null,
       errorOnAPI: "none",
-      errorMessageFromAPI:null
+      errorMessageFromAPI: null,
     };
   },
   methods: {
@@ -148,8 +148,18 @@ export default {
           console.error("There was an error!", error);
         });
     },
+    retrieveOnlyDataNotInLocalStorage() {
+      let tempUserStocks = [];
+      this.userStocks.forEach((selectedStock) => {
+        if (localStorage.getItem(selectedStock["symbol"]) === null) {
+          tempUserStocks.push(selectedStock);
+        }
+      });
+      this.userStocks = tempUserStocks;
+    },
     retrieveStocksDataFromAPI() {
-      this.userStocks.forEach((selectedStock) =>
+      this.userStocks.forEach((selectedStock) =>{
+      if (localStorage.getItem(selectedStock["symbol"]) === null) {
         axios
           .get(
             this.fmp
@@ -170,15 +180,25 @@ export default {
                   ).toFixed(2),
                 };
                 this.stocks.push(mergedData);
-                localStorage.setItem(selectedStock["symbol"],mergedData);
+                localStorage.setItem(
+                  selectedStock["symbol"],
+                  JSON.stringify(mergedData)
+                );
                 this.loadedStocks++;
               })
           )
           .catch((e) => {
             console.log(e);
-            this.errorMessageFromAPI=e;
+            this.errorMessageFromAPI = e;
           })
+      }
+      else{
+        this.stocks.push(JSON.parse(localStorage.getItem(selectedStock["symbol"])));
+        this.loadedStocks++;
+      }
+      }
       );
+
       if (this.loadedStocks == 0) {
         this.errorOnAPI = "block";
         this.stocksLoadedFlag = false;

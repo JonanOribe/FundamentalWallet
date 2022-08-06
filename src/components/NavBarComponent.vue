@@ -97,9 +97,6 @@ export default {
       this.balance_percentage = (this.balance / total_amount) * 100;
       this.money_on_investment_percentage =
         (this.money_on_investment / total_amount) * 100;
-
-      console.log(this.balance_percentage);
-      console.log(this.money_on_investment_percentage);
     },
   },
   created() {
