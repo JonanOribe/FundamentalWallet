@@ -22,7 +22,7 @@
       role="alert"
       :style="{ display: errorOnAPI }"
     >
-      Error on API!
+      {{errorMessageFromAPI}}
     </div>
     <table class="table">
       <thead>
@@ -102,6 +102,7 @@ export default {
       modalDisplay: "none",
       modalData: null,
       errorOnAPI: "none",
+      errorMessageFromAPI:null
     };
   },
   methods: {
@@ -175,6 +176,7 @@ export default {
           )
           .catch((e) => {
             console.log(e);
+            this.errorMessageFromAPI=e;
           })
       );
       if (this.loadedStocks == 0) {
