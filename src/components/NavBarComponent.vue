@@ -76,8 +76,21 @@
 </template>
 
 <script>
+import { ref } from "vue";
+import { userInvestmentValuesStore } from "@/stores/investmentValuesStore";
 export default {
   name: "NavBarComponent",
+    setup() {//TODO GETTERS 
+    const investmentValuesStore = userInvestmentValuesStore();
+    let balanceToggleValue = ref(false);
+    let moneyOnInvestmentToggleValue = ref(false);
+    investmentValuesStore.changeBalanceValue(balanceToggleValue);
+    investmentValuesStore.changeMoneyOnInvestment(moneyOnInvestmentToggleValue);
+    return {
+      balanceToggleValue,
+      moneyOnInvestmentToggleValue,
+    };
+  },
   data() {
     return {
       expanded: false,

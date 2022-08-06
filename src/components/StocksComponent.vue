@@ -78,14 +78,27 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import axios from "axios";
 import APIkeysJson from "../../secrets/APIkeys.json";
 import ModalComponent from "@/components/ModalComponent.vue";
+import { userInvestmentValuesStore } from "@/stores/investmentValuesStore";
 
 export default {
   name: "StocksComponent",
   components: {
     ModalComponent,
+  },
+  setup() {
+    const investmentValuesStore = userInvestmentValuesStore();
+    let balanceToggleValue = ref(false);
+    let moneyOnInvestmentToggleValue = ref(false);
+    investmentValuesStore.changeBalanceValue(balanceToggleValue);
+    investmentValuesStore.changeMoneyOnInvestment(moneyOnInvestmentToggleValue);
+    return {
+      balanceToggleValue,
+      moneyOnInvestmentToggleValue,
+    };
   },
   data() {
     return {
@@ -108,7 +121,7 @@ export default {
   methods: {
     toogleModal(stock) {
       let elem = document.getElementsByClassName("modal")[0];
-      this.modalDisplay = elem.style.display === "none"?"block":"none";
+      this.modalDisplay = elem.style.display === "none" ? "block" : "none";
       this.modalData = stock;
     },
     getAPIData() {
@@ -139,7 +152,7 @@ export default {
           }
           console.log(data);
           this.userStocks = data[0].portfolio_values;
-          this.numberOfStocks = data[0].portfolio_values.length;//TODO
+          this.numberOfStocks = data[0].portfolio_values.length; //TODO
         })
         .catch((error) => {
           this.errorMessage = error;
@@ -156,46 +169,47 @@ export default {
       this.userStocks = tempUserStocks;
     },
     retrieveStocksDataFromAPI() {
-      this.userStocks.forEach((selectedStock) =>{
-      if (localStorage.getItem(selectedStock["symbol"]) === null) {
-        axios
-          .get(
-            this.fmp
-              .stock(selectedStock["symbol"])
-              .quote()
-              .then((res) => {
-                let mergedData = {
-                  ...res[0],
-                  symbol: selectedStock["symbol"],
-                  priceOnBuy: selectedStock["price_on_buy"],
-                  stocksQuantity: selectedStock["stocks_quantity"],
-                  acquisitionCondition: selectedStock["acquisition_condition"],
-                  acquisitionDate: selectedStock["operation_date"],
-                  diff: parseFloat(
-                    res[0]["price"] * selectedStock["stocks_quantity"] -
-                      selectedStock["price_on_buy"] *
-                        selectedStock["stocks_quantity"]
-                  ).toFixed(2),
-                };
-                this.stocks.push(mergedData);
-                localStorage.setItem(
-                  selectedStock["symbol"],
-                  JSON.stringify(mergedData)
-                );
-                this.loadedStocks++;
-              })
-          )
-          .catch((e) => {
-            console.log(e);
-            this.errorMessageFromAPI = e;
-          })
-      }
-      else{
-        this.stocks.push(JSON.parse(localStorage.getItem(selectedStock["symbol"])));
-        this.loadedStocks++;
-      }
-      }
-      );
+      this.userStocks.forEach((selectedStock) => {
+        if (localStorage.getItem(selectedStock["symbol"]) === null) {
+          axios
+            .get(
+              this.fmp
+                .stock(selectedStock["symbol"])
+                .quote()
+                .then((res) => {
+                  let mergedData = {
+                    ...res[0],
+                    symbol: selectedStock["symbol"],
+                    priceOnBuy: selectedStock["price_on_buy"],
+                    stocksQuantity: selectedStock["stocks_quantity"],
+                    acquisitionCondition:
+                      selectedStock["acquisition_condition"],
+                    acquisitionDate: selectedStock["operation_date"],
+                    diff: parseFloat(
+                      res[0]["price"] * selectedStock["stocks_quantity"] -
+                        selectedStock["price_on_buy"] *
+                          selectedStock["stocks_quantity"]
+                    ).toFixed(2),
+                  };
+                  this.stocks.push(mergedData);
+                  localStorage.setItem(
+                    selectedStock["symbol"],
+                    JSON.stringify(mergedData)
+                  );
+                  this.loadedStocks++;
+                })
+            )
+            .catch((e) => {
+              console.log(e);
+              this.errorMessageFromAPI = e;
+            });
+        } else {
+          this.stocks.push(
+            JSON.parse(localStorage.getItem(selectedStock["symbol"]))
+          );
+          this.loadedStocks++;
+        }
+      });
 
       if (this.loadedStocks == 0) {
         this.errorOnAPI = "block";
@@ -206,6 +220,15 @@ export default {
       } else {
         this.stocksLoadedFlag = true;
         localStorage.setItem("last_stocks_values_update_timestamp", Date.now());
+      }
+
+/*
+      for (let i = 0; i < this.stocks.length; i++) {
+        this.balanceToggleValue+=this.stocks[i]["priceOnBuy"];
+      }
+*/
+      for (let i = 0; i < this.stocks.length; i++) {
+        this.moneyOnInvestmentToggleValue+=parseFloat(this.stocks[i]["diff"]);
       }
     },
   },
