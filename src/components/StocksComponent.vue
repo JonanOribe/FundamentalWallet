@@ -17,6 +17,13 @@
         </svg>
       </div>
     </h3>
+    <div
+      class="alert alert-danger"
+      role="alert"
+      :style="{ display: errorOnAPI }"
+    >
+      Error on API!
+    </div>
     <table class="table">
       <thead>
         <tr>
@@ -37,17 +44,17 @@
           :class="`${parseInt(stock['diff']) >= 0 ? 'benefits' : 'noBenefits'}`"
         >
           <th scope="row" class="white_text">{{ stock["symbol"] }}</th>
-          <td class="white_text">{{ stock["price"] }}{{currency}}</td>
-          <td class="white_text">{{ stock["priceOnBuy"] }}{{currency}}</td>
+          <td class="white_text">{{ stock["price"] }}{{ currency }}</td>
+          <td class="white_text">{{ stock["priceOnBuy"] }}{{ currency }}</td>
           <td class="white_text">{{ stock["stocksQuantity"] }}</td>
-          <td class="white_text">{{ stock["diff"] }}{{currency}}</td>
+          <td class="white_text">{{ stock["diff"] }}{{ currency }}</td>
           <td class="white_text">{{ stock["acquisitionCondition"] }}</td>
           <td class="white_text">{{ stock["acquisitionDate"] }}</td>
           <td>
             <button
               type="button"
               class="btn btn-outline-warning"
-              @click="deleteStock(stock)"
+              @click="toogleModal(stock)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -67,14 +74,19 @@
       </tbody>
     </table>
   </div>
+  <ModalComponent :stock="modalData" :modalStatus="modalDisplay" />
 </template>
 
 <script>
 import axios from "axios";
 import APIkeysJson from "../../secrets/APIkeys.json";
+import ModalComponent from "@/components/ModalComponent.vue";
 
 export default {
   name: "StocksComponent",
+  components: {
+    ModalComponent,
+  },
   data() {
     return {
       userStocks: [],
@@ -86,38 +98,16 @@ export default {
       numberOfStocks: 0,
       loadedStocks: 0,
       stocksLoadedFlag: false,
-      currency:localStorage.getItem("currency")==="EU"?'€':'$'
+      currency: localStorage.getItem("currency") === "EU" ? "€" : "$",
+      modalDisplay: "none",
+      modalData: null,
+      errorOnAPI: "none",
     };
   },
   methods: {
-    deleteStock(stock) {
-      const requestOptions = {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      };
-      return fetch(
-        this.qmAPIUrl +
-          this.client_id +
-          "/portfolio/" +
-          this.portfolioId +
-          "/delete_stock_from_portfolio/" +
-          stock.symbol,
-        requestOptions
-      )
-        .then(async (response) => {
-          const data = await response.json();
-
-          // check for error response
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          }
-        })
-        .catch((error) => {
-          this.errorMessage = error;
-          console.error("There was an error!", error);
-        });
+    toogleModal(stock) {
+      this.modalDisplay = this.modalDisplay === "none" ? "block" : "none";
+      this.modalData = stock;
     },
     getAPIData() {
       for (let i = 0; i < APIkeysJson.length; i++) {
@@ -135,7 +125,10 @@ export default {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       };
-      return fetch(this.qmAPIUrl + this.client_id + "/portfolio", requestOptions)
+      return fetch(
+        this.qmAPIUrl + this.client_id + "/portfolio",
+        requestOptions
+      )
         .then(async (response) => {
           const data = await response.json();
 
@@ -183,8 +176,16 @@ export default {
             console.log(e);
           })
       );
-      this.stocksLoadedFlag = true;
-      localStorage.setItem("last_stocks_values_update_timestamp", Date.now());
+      if (this.loadedStocks == 0) {
+        this.errorOnAPI = "block";
+        this.stocksLoadedFlag = false;
+        setTimeout(() => {
+          this.errorOnAPI = "none";
+        }, "1500");
+      } else {
+        this.stocksLoadedFlag = true;
+        localStorage.setItem("last_stocks_values_update_timestamp", Date.now());
+      }
     },
   },
   computed: {
@@ -217,8 +218,14 @@ h3 {
   background: #198754;
 }
 
-.white_text{
-  color:white; 
+.white_text {
+  color: white;
   font-weight: bold;
+}
+
+.modal-content {
+  background: black;
+  border: 1px solid #198754;
+  border-radius: 25px;
 }
 </style>
