@@ -107,16 +107,14 @@ export default {
   },
   methods: {
     toogleModal(stock) {
-      this.modalDisplay = this.modalDisplay === "none" ? "block" : "none";
+      let elem = document.getElementsByClassName("modal")[0];
+      this.modalDisplay = elem.style.display === "none"?"block":"none";
       this.modalData = stock;
     },
     getAPIData() {
       for (let i = 0; i < APIkeysJson.length; i++) {
         if (APIkeysJson[i].source === "fmp") {
           this.fmp = require("financialmodelingprep")(APIkeysJson[i].key);
-        }
-        if (APIkeysJson[i].source === "QMAPITestUser") {
-          this.portfolioId = APIkeysJson[i].portfolioId;
         }
       }
     },
@@ -141,7 +139,7 @@ export default {
           }
           console.log(data);
           this.userStocks = data[0].portfolio_values;
-          this.numberOfStocks = data[0].portfolio_values.length;
+          this.numberOfStocks = data[0].portfolio_values.length;//TODO
         })
         .catch((error) => {
           this.errorMessage = error;

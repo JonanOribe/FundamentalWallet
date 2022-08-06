@@ -25,11 +25,13 @@ export default {
     return {
       qmAPIUrl: "https://qm-dashboard-api.herokuapp.com/",
       userId: "NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3",
+      portfolioId: "62ee8470f14037000aa60257"
     };
   },
   methods: {
     setDataForStorage(data) {
       localStorage.setItem("qmAPIUrl", this.qmAPIUrl);
+      localStorage.setItem("portfolioId", this.portfolioId);
       let arrayOfKeys = Object.keys(data);
       for (let i = 0; i < arrayOfKeys.length; i++) {
         let tempKey = arrayOfKeys[i];

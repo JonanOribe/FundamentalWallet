@@ -15,7 +15,7 @@
 </button>
 </p>
 <div v-show="showAddNewStock">
-    <input class="input-elements" v-model="stockName" placeholder="APPL" />
+    <input class="input-elements" v-model="stockName" placeholder="AAPL" />
     <button class="btn btn-outline-success settings" style="margin-left: 0.5%;" @click="updateStockList(),showNewStockModal()">Add Stock to list</button>
     <div  style="margin-top:0.5%">Select acquisition condition:
 

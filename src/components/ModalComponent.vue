@@ -3,7 +3,7 @@
     class="modal"
     tabindex="-1"
     role="dialog"
-    :style="{ display: modalDisplay }"
+    :style="{ display: modalStatus }"
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -26,7 +26,7 @@
           <button
             type="button"
             class="btn btn-danger"
-            @click="deleteStock(stock)"
+            @click="deleteStock(stock),toogleModal()"
           >
             Delete stock
           </button>
@@ -53,12 +53,15 @@ export default {
   },
   data() {
     return {
-      modalDisplay: "none",
+      qmAPIUrl: localStorage.getItem("qmAPIUrl"),
+      client_id: localStorage.getItem("client_id"),
+      portfolioId: localStorage.getItem("portfolioId"),
     };
   },
   methods: {
     toogleModal() {
-      this.modalDisplay = this.modalStatus === "none" ? "block" : "none";
+      let elem = document.getElementsByClassName("modal")[0];
+      elem.style.display = elem.style.display === "none"?"block":"none";
     },
     deleteStock(stock) {
       const requestOptions = {
@@ -82,6 +85,8 @@ export default {
             // get error message from body or default to response status
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
+          }else{
+            localStorage.removeItem(stock.symbol);
           }
         })
         .catch((error) => {
