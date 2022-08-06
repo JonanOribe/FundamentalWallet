@@ -1,25 +1,28 @@
 <template>
-  <div class="container" style="margin-top: 0.5%;">
+  <div class="container input-area" style="margin-top: 0.5%;">
     <p class="animate-charcter">Add your new stock >>>    <button class="btn btn-outline-success settings" @click="showNewStockModal()"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
 </svg>
 </button></p>
 <div v-show="showAddNewStock">
-    <input v-model="stockName" placeholder="Add new stock symbol" />
-    <button @click="updateStockList(),showNewStockModal()">Add Stock to list</button>
-    <div>Select acquisition condition:</div>
+    <input class="input-elements" v-model="stockName" placeholder="Add new stock symbol" />
+    <button class="btn btn-outline-success settings" style="margin-left: 0.5%;" @click="updateStockList(),showNewStockModal()">Add Stock to list</button>
+    <div  style="margin-top:0.5%">Select acquisition condition:
 
-    <select v-model="statusPicked">
+    <select class="input-elements" v-model="statusPicked">
       <option value="long">Long</option>
       <option value="short">Short</option>
     </select>
+    </div>
+    <div style="margin-top:0.5%">
     Stock Price:
-<input type="number" data-decimals="2" min="0" max="100000" step="0.1" v-model.number="stockPrice"/>
+<input class="input-elements" type="number" data-decimals="2" min="0" max="100000" step="0.1" v-model.number="stockPrice"/>
 
     Stock Quantity:
 
-<input type="number" min="0" max="100000" step="1" v-model.number="stockQuantity"/>
+<input class="input-elements" type="number" min="0" max="100000" step="1" v-model.number="stockQuantity"/>
+</div>
     </div>
   </div>
 </template>
@@ -91,6 +94,20 @@ export default {
 <style scoped>
 h3 {
   margin-bottom: 5%;
+}
+
+.input-area{
+  border: 2px solid #198754;
+    border-radius: 25px;
+    padding: 0.8%;
+    width: auto;
+    margin-bottom: 0.5%;
+    border-style: dashed ;
+}
+
+.input-elements{
+    border: 3px solid #198754;
+    border-radius: 25px;
 }
 
 .animate-charcter

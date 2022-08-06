@@ -1,7 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#" style="color:#198754">Fundamental Wallet</a>
+      <a class="navbar-brand" href="#" style="color: #198754">
+        Fundamental Wallet</a
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -17,22 +19,23 @@
         <ul
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
           style="--bs-scroll-height: 100px"
-        >
-        </ul>
+        ></ul>
         <div class="progress investment_bar">
           <div
             class="progress-bar bg-success"
             role="progressbar"
             :style="{ width: balance_percentage + '%' }"
           >
-            <b class="blackStrings">Available: {{ balance }}{{currency}}</b>
+            <b class="blackStrings">Available: {{ balance }}{{ currency }}</b>
           </div>
           <div
             class="progress-bar bg-warning"
             role="progressbar"
             :style="{ width: money_on_investment_percentage + '%' }"
           >
-            <b class="blackStrings">Invested: {{ money_on_investment }}{{currency}}</b>
+            <b class="blackStrings"
+              >Invested: {{ money_on_investment }}{{ currency }}</b
+            >
           </div>
         </div>
         <button type="button" class="btn btn-outline-success settings">
@@ -84,7 +87,7 @@ export default {
       ),
       balance_percentage: 100,
       money_on_investment_percentage: 0,
-      currency:localStorage.getItem("currency")==="EU"?'€':'$'
+      currency: localStorage.getItem("currency") === "EU" ? "€" : "$",
     };
   },
   methods: {
