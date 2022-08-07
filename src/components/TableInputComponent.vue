@@ -45,6 +45,7 @@ export default {
       stockName: null,
       qmAPIUrl: localStorage.getItem("qmAPIUrl"),
       client_id: localStorage.getItem("client_id"),
+      portfolioId: localStorage.getItem("portfolioId"),
       statusPicked: "long",
       stockQuantity:1,
       stockPrice:100.5
@@ -78,7 +79,9 @@ export default {
       return fetch(
         this.qmAPIUrl +
           this.client_id +
-          "/portfolio/update_client_portolio_values",
+          "/portfolio/" +
+          this.portfolioId+
+          "/update_client_portfolio_values",
         requestOptions
       )
         .then(async (response) => {
