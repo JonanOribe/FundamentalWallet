@@ -116,6 +116,27 @@ export default {
           console.error("There was an error!", error);
         });
     },
+    deleteForexOldValues() {
+      const requestOptions = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      };
+      return fetch(this.qmAPIUrl + "utils/forex_dict/delete", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+        })
+        .catch((error) => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
+    },
     getAPIData() {
       for (let i = 0; i < APIkeysJson.length; i++) {
         if (APIkeysJson[i].source === "apilayerForexEchange") {
@@ -132,7 +153,10 @@ export default {
   mounted() {
     if (this.belowRange) {
       setTimeout(() => {
-        this.saveForexValues();
+        this.deleteForexOldValues();
+        setTimeout(() => {
+          this.saveForexValues();
+        }, "1000");
       }, "1000");
     }
   },
