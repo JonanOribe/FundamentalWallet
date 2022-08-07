@@ -24,7 +24,9 @@
     >
       {{ errorMessageFromAPI }}
     </div>
-    <table class="table">
+    <table class="table" style="
+    border: 2px dashed #198754;
+">
       <thead>
         <tr>
           <th scope="col" class="white_text">Symbol</th>
