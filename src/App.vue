@@ -27,7 +27,8 @@ export default {
       qmAPIUrl: "https://qm-dashboard-api.herokuapp.com/",
       userId: "NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3",
       portfolioId: "62ee8470f14037000aa60257",
-      forexEchange: null
+      forexEchange: null,
+      belowRange: true,
     };
   },
   methods: {
@@ -64,12 +65,18 @@ export default {
         });
     },
     getForexRatios() {
-      let range = Date.now - JSON.parse(localStorage.getItem("forexValues")).timestamp;
-      if (range > 86400000) {
+      if (JSON.parse(localStorage.getItem("forexValues"))) {
+        this.belowRange =
+          Date.now - JSON.parse(localStorage.getItem("forexValues")).timestamp >
+          86400000
+            ? true
+            : false;
+      }
+      if (this.belowRange) {
         let base = "EUR";
-        let symbols = "USD,CAD";
+        let symbols = "USD,CAD,JPY,GBP,AUD,CNY";
         var myHeaders = new Headers();
-        myHeaders.append("apikey",this.forexEchange);
+        myHeaders.append("apikey", this.forexEchange);
 
         var requestOptions = {
           method: "GET",
@@ -77,16 +84,37 @@ export default {
           headers: myHeaders,
         };
 
-        fetch(
+        return fetch(
           `https://api.apilayer.com/exchangerates_data/latest?symbols=${symbols}&base=${base}`,
           requestOptions
         )
           .then((response) => response.text())
-          .then((result) =>
-            localStorage.setItem("forexValues", result)
-          )
+          .then((result) => localStorage.setItem("forexValues", result))
           .catch((error) => console.log("error", error));
       }
+    },
+    saveForexValues() {
+      let preFormat = JSON.parse(localStorage.getItem("forexValues"));
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(preFormat),
+      };
+      return fetch(this.qmAPIUrl + "utils/forex_dict/create", requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+        })
+        .catch((error) => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
     },
     getAPIData() {
       for (let i = 0; i < APIkeysJson.length; i++) {
@@ -100,6 +128,13 @@ export default {
     this.getAPIData();
     this.getUserData();
     this.getForexRatios();
+  },
+  mounted() {
+    if (this.belowRange) {
+      setTimeout(() => {
+        this.saveForexValues();
+      }, "1000");
+    }
   },
 };
 </script>
