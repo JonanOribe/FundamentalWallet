@@ -30,6 +30,8 @@ https://www.alphavantage.co/documentation/
 
 https://api.tiingo.com/documentation/end-of-day
 
-https://site.financialmodelingprep.com/developer/docs/#Price-Target
+STOCKS API: https://site.financialmodelingprep.com/developer/docs/#Price-Target
 
-https://github.com/patelneel55/financialmodelingprep
+STOCKS REPO: https://github.com/patelneel55/financialmodelingprep
+
+FOREX API: https://apilayer.com/marketplace/exchangerates_data-api#documentation-tab

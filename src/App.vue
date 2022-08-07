@@ -12,6 +12,7 @@
 import NavBarComponent from "./components/NavBarComponent.vue";
 import StocksComponent from "./components/StocksComponent.vue";
 import TableInputComponent from "./components/TableInputComponent.vue";
+import APIkeysJson from "../secrets/APIkeys.json";
 
 export default {
   name: "App",
@@ -25,7 +26,8 @@ export default {
     return {
       qmAPIUrl: "https://qm-dashboard-api.herokuapp.com/",
       userId: "NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3",
-      portfolioId: "62ee8470f14037000aa60257"
+      portfolioId: "62ee8470f14037000aa60257",
+      forexEchange: null
     };
   },
   methods: {
@@ -61,9 +63,43 @@ export default {
           console.error("There was an error!", error);
         });
     },
+    getForexRatios() {
+      let range = Date.now - JSON.parse(localStorage.getItem("forexValues")).timestamp;
+      if (range > 86400000) {
+        let base = "EUR";
+        let symbols = "USD,CAD";
+        var myHeaders = new Headers();
+        myHeaders.append("apikey",this.forexEchange);
+
+        var requestOptions = {
+          method: "GET",
+          redirect: "follow",
+          headers: myHeaders,
+        };
+
+        fetch(
+          `https://api.apilayer.com/exchangerates_data/latest?symbols=${symbols}&base=${base}`,
+          requestOptions
+        )
+          .then((response) => response.text())
+          .then((result) =>
+            localStorage.setItem("forexValues", result)
+          )
+          .catch((error) => console.log("error", error));
+      }
+    },
+    getAPIData() {
+      for (let i = 0; i < APIkeysJson.length; i++) {
+        if (APIkeysJson[i].source === "apilayerForexEchange") {
+          this.forexEchange = APIkeysJson[i].key;
+        }
+      }
+    },
   },
   created() {
+    this.getAPIData();
     this.getUserData();
+    this.getForexRatios();
   },
 };
 </script>
@@ -74,11 +110,11 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color:white;
+  color: white;
   background: black;
 }
-.body{
-  color:white;
+.body {
+  color: white;
   background: black;
-  }
+}
 </style>

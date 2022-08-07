@@ -221,12 +221,6 @@ export default {
         this.stocksLoadedFlag = true;
         localStorage.setItem("last_stocks_values_update_timestamp", Date.now());
       }
-
-/*
-      for (let i = 0; i < this.stocks.length; i++) {
-        this.balanceToggleValue+=this.stocks[i]["priceOnBuy"];
-      }
-*/
       for (let i = 0; i < this.stocks.length; i++) {
         this.moneyOnInvestmentToggleValue+=parseFloat(this.stocks[i]["diff"]);
       }
