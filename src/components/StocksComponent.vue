@@ -24,9 +24,7 @@
     >
       {{ errorMessageFromAPI }}
     </div>
-    <table class="table" style="
-    border: 2px dashed #198754;
-">
+    <table class="table" style="border: 2px dashed #198754">
       <thead>
         <tr>
           <th scope="col" class="white_text">Symbol</th>
@@ -118,6 +116,7 @@ export default {
       modalData: null,
       errorOnAPI: "none",
       errorMessageFromAPI: null,
+      diffSum: 0,
     };
   },
   methods: {
@@ -154,7 +153,7 @@ export default {
           }
           console.log(data);
           this.userStocks = data[0].portfolio_values;
-          this.numberOfStocks = data[0].portfolio_values.length; //TODO
+          this.numberOfStocks = data[0].portfolio_values.length;
         })
         .catch((error) => {
           this.errorMessage = error;
@@ -171,6 +170,7 @@ export default {
       this.userStocks = tempUserStocks;
     },
     retrieveStocksDataFromAPI() {
+      let valueToJSON;
       this.userStocks.forEach((selectedStock) => {
         if (localStorage.getItem(selectedStock["symbol"]) === null) {
           axios
@@ -194,11 +194,11 @@ export default {
                     ).toFixed(2),
                   };
                   this.stocks.push(mergedData);
-                  localStorage.setItem(
-                    selectedStock["symbol"],
-                    JSON.stringify(mergedData)
+                  valueToJSON = JSON.parse(
+                    localStorage.getItem(selectedStock["symbol"])
                   );
-                  this.loadedStocks++;
+
+                  localStorage.setItem(valueToJSON);
                 })
             )
             .catch((e) => {
@@ -206,11 +206,14 @@ export default {
               this.errorMessageFromAPI = e;
             });
         } else {
-          this.stocks.push(
-            JSON.parse(localStorage.getItem(selectedStock["symbol"]))
+          valueToJSON = JSON.parse(
+            localStorage.getItem(selectedStock["symbol"])
           );
-          this.loadedStocks++;
+
+          this.stocks.push(valueToJSON);
         }
+        this.diffSum += parseFloat(valueToJSON["diff"]);
+        this.loadedStocks++;
       });
 
       if (this.loadedStocks == 0) {
@@ -224,7 +227,7 @@ export default {
         localStorage.setItem("last_stocks_values_update_timestamp", Date.now());
       }
       for (let i = 0; i < this.stocks.length; i++) {
-        this.moneyOnInvestmentToggleValue+=parseFloat(this.stocks[i]["diff"]);
+        this.moneyOnInvestmentToggleValue += parseFloat(this.stocks[i]["diff"]);
       }
     },
   },
@@ -252,10 +255,12 @@ h3 {
 
 .noBenefits {
   background: #ff0000b8;
+  border: 1px solid black;
 }
 
 .benefits {
   background: #198754;
+  border: 1px solid black;
 }
 
 .white_text {
