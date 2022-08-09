@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      qmAPIUrl: "https://qm-dashboard-api.herokuapp.com/",//"http://127.0.0.1:8000/",//
+      qmAPIUrl: "https://qm-dashboard-api.herokuapp.com/api/v1.1/",//"http://127.0.0.1:8000/",//
       userId: "NzIMN8jMOZyVuWktmLMwa1jDvdMqXbc3",
       portfolioId: "62ef9df967da88753c9e32a0",
       forexEchange: null,
